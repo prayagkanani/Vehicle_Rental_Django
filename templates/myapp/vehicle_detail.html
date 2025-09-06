@@ -1,0 +1,499 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}{{ vehicle.name }} - Rental House{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'vehicle_list' %}" class="text-white">Vehicles</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ vehicle.name }}</li>
+                    </ol>
+                </nav>
+                <h1 class="display-4 fw-bold mb-3">{{ vehicle.name }}</h1>
+                <p class="lead mb-0">{{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.year }})</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="vehicle-status-badge">
+                    {% if vehicle.is_available %}
+                        <span class="badge bg-success fs-6 px-3 py-2">
+                            <i class="fas fa-check-circle me-2"></i>Available for Rent
+                        </span>
+                    {% else %}
+                        <span class="badge bg-danger fs-6 px-3 py-2">
+                            <i class="fas fa-times-circle me-2"></i>Currently Booked
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Vehicle Details -->
+<section class="vehicle-details py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Vehicle Image and Basic Info -->
+            <div class="col-lg-8 mb-5">
+                <div class="vehicle-image-section mb-4">
+                    {% if vehicle.image %}
+                        <img src="{{ vehicle.image.url }}" class="img-fluid rounded-3 shadow" alt="{{ vehicle.name }}">
+                    {% else %}
+                        <div class="vehicle-placeholder bg-light rounded-3 d-flex align-items-center justify-content-center" style="height: 400px;">
+                            <div class="text-center">
+                                <i class="fas fa-car fa-5x text-muted mb-3"></i>
+                                <h5 class="text-muted">No Image Available</h5>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+                
+                <!-- Vehicle Specifications -->
+                <div class="vehicle-specs-card bg-white rounded shadow-sm p-4 mb-4">
+                    <h4 class="fw-bold mb-4">
+                        <i class="fas fa-cogs me-2 text-primary"></i>Specifications
+                    </h4>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="spec-item">
+                                <span class="spec-label">Brand:</span>
+                                <span class="spec-value">{{ vehicle.brand }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="spec-item">
+                                <span class="spec-label">Model:</span>
+                                <span class="spec-value">{{ vehicle.model }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="spec-item">
+                                <span class="spec-label">Year:</span>
+                                <span class="spec-value">{{ vehicle.year }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="spec-item">
+                                <span class="spec-label">Fuel Type:</span>
+                                <span class="spec-value">{{ vehicle.fuel_type }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="spec-item">
+                                <span class="spec-label">Transmission:</span>
+                                <span class="spec-value">{{ vehicle.transmission }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="spec-item">
+                                <span class="spec-label">Seats:</span>
+                                <span class="spec-value">{{ vehicle.seats }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="spec-item">
+                                <span class="spec-label">Mileage:</span>
+                                <span class="spec-value">{{ vehicle.mileage }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="spec-item">
+                                <span class="spec-label">Color:</span>
+                                <span class="spec-value">{{ vehicle.color }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Vehicle Description -->
+                <div class="vehicle-description bg-white rounded shadow-sm p-4 mb-4">
+                    <h4 class="fw-bold mb-3">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>Description
+                    </h4>
+                    <p class="text-muted mb-0">{{ vehicle.description }}</p>
+                </div>
+                
+                <!-- Vehicle Features -->
+                <div class="vehicle-features bg-white rounded shadow-sm p-4 mb-4">
+                    <h4 class="fw-bold mb-3">
+                        <i class="fas fa-star me-2 text-primary"></i>Features
+                    </h4>
+                    <div class="features-grid">
+                        {% for feature in vehicle.get_features_list %}
+                            <span class="feature-badge">{{ feature }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                
+                <!-- Reviews Section -->
+                <div class="reviews-section bg-white rounded shadow-sm p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h4 class="fw-bold mb-0">
+                            <i class="fas fa-comments me-2 text-primary"></i>Customer Reviews
+                        </h4>
+                        <div class="rating-summary">
+                            <span class="badge bg-primary fs-6 px-3 py-2">
+                                <i class="fas fa-star me-1"></i>{{ avg_rating }}/5
+                            </span>
+                        </div>
+                    </div>
+                    
+                    {% if reviews %}
+                        {% for review in reviews %}
+                        <div class="review-item border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h6 class="fw-bold mb-1">{{ review.user.username }}</h6>
+                                    <div class="rating-stars">
+                                        {% for i in "12345" %}
+                                            {% if forloop.counter <= review.rating %}
+                                                <i class="fas fa-star text-warning"></i>
+                                            {% else %}
+                                                <i class="far fa-star text-muted"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ review.created_at|date:"M d, Y" }}</small>
+                            </div>
+                            <p class="text-muted mb-0">{{ review.comment }}</p>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-muted text-center py-3">No reviews yet. Be the first to review this vehicle!</p>
+                    {% endif %}
+                    
+                    {% if user.is_authenticated and not user_review %}
+                        <div class="add-review-section mt-4">
+                            <h6 class="fw-bold mb-3">Add Your Review</h6>
+                            <form method="post" action="{% url 'add_review' vehicle.id %}">
+                                {% csrf_token %}
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="rating" class="form-label">Rating</label>
+                                        <select name="rating" id="rating" class="form-control" required>
+                                            <option value="">Select rating</option>
+                                            <option value="5">5 - Excellent</option>
+                                            <option value="4">4 - Very Good</option>
+                                            <option value="3">3 - Good</option>
+                                            <option value="2">2 - Fair</option>
+                                            <option value="1">1 - Poor</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-12 mb-3">
+                                        <label for="comment" class="form-label">Comment</label>
+                                        <textarea name="comment" id="comment" class="form-control" rows="3" placeholder="Share your experience with this vehicle..." required></textarea>
+                                    </div>
+                                    <div class="col-12">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-paper-plane me-2"></i>Submit Review
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Booking Sidebar -->
+            <div class="col-lg-4">
+                <div class="booking-sidebar">
+                    <!-- Pricing Card -->
+                    <div class="pricing-card bg-white rounded shadow-sm p-4 mb-4">
+                        <h4 class="fw-bold mb-3 text-center">
+                            <i class="fas fa-tags me-2 text-primary"></i>Pricing
+                        </h4>
+                        <div class="pricing-item mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="pricing-label">Per 24 Hours:</span>
+                                <span class="pricing-value text-primary fw-bold">₹{{ vehicle.price_per_day }}</span>
+                            </div>
+                        </div>
+                        <div class="pricing-item mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="pricing-label">Per Hour:</span>
+                                <span class="pricing-value text-success">₹{{ vehicle.price_per_hour }}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="pricing-note text-center">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                Minimum booking duration: 1 hour
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Booking -->
+                    {% if vehicle.is_available %}
+                        <div class="quick-booking bg-white rounded shadow-sm p-4 mb-4">
+                            <h5 class="fw-bold mb-3 text-center">
+                                <i class="fas fa-calendar-check me-2 text-success"></i>Quick Booking
+                            </h5>
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'book_vehicle' vehicle.id %}" class="btn btn-success btn-lg">
+                                    <i class="fas fa-calendar-plus me-2"></i>Book Now
+                                </a>
+                                <a href="{% url 'vehicle_list' %}?vehicle_type={{ vehicle.vehicle_type }}" class="btn btn-outline-primary">
+                                    <i class="fas fa-search me-2"></i>View Similar Vehicles
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="unavailable-notice bg-light rounded p-4 text-center">
+                            <i class="fas fa-clock fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">Currently Unavailable</h5>
+                            <p class="text-muted mb-3">This vehicle is currently booked. Please check back later or browse similar vehicles.</p>
+                            <a href="{% url 'vehicle_list' %}?vehicle_type={{ vehicle.vehicle_type }}" class="btn btn-primary">
+                                <i class="fas fa-search me-2"></i>Find Similar Vehicles
+                            </a>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Contact Info -->
+                    <div class="contact-info bg-white rounded shadow-sm p-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-phone me-2 text-primary"></i>Need Help?
+                        </h5>
+                        <div class="contact-item mb-2">
+                            <i class="fas fa-phone me-2 text-success"></i>
+                            <a href="tel:+919876543210" class="text-decoration-none">+91 98765 43210</a>
+                        </div>
+                        <div class="contact-item mb-2">
+                            <i class="fas fa-envelope me-2 text-warning"></i>
+                            <a href="mailto:info@rentalhouse.com" class="text-decoration-none">info@rentalhouse.com</a>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-clock me-2 text-info"></i>
+                            <span>24/7 Support</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Similar Vehicles -->
+{% if similar_vehicles %}
+<section class="similar-vehicles py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h3 class="fw-bold text-dark mb-2">Similar Vehicles</h3>
+            <p class="text-muted">You might also be interested in these vehicles</p>
+        </div>
+        
+        <div class="row">
+            {% for similar_vehicle in similar_vehicles %}
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="vehicle-card h-100 bg-white rounded shadow-sm overflow-hidden">
+                    {% if similar_vehicle.image %}
+                        <img src="{{ similar_vehicle.image.url }}" class="card-img-top vehicle-image" alt="{{ similar_vehicle.name }}">
+                    {% else %}
+                        <div class="vehicle-placeholder bg-light d-flex align-items-center justify-content-center">
+                            <i class="fas fa-car fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body p-3">
+                        <div class="vehicle-type-badge mb-2">
+                            <span class="badge bg-primary">{{ similar_vehicle.get_vehicle_type_display }}</span>
+                        </div>
+                        <h6 class="card-title fw-bold mb-2">{{ similar_vehicle.name }}</h6>
+                        <p class="text-muted small mb-2">{{ similar_vehicle.brand }} {{ similar_vehicle.model }}</p>
+                        
+                        <div class="vehicle-price mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted">Per day</small>
+                                <span class="text-primary fw-bold">₹{{ similar_vehicle.price_per_day }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <a href="{% url 'vehicle_detail' similar_vehicle.id %}" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-info-circle me-1"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<style>
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.page-header .container {
+    position: relative;
+    z-index: 2;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.breadcrumb-item a {
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    text-decoration: underline;
+}
+
+.vehicle-image-section img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+}
+
+.vehicle-placeholder {
+    background: linear-gradient(45deg, #f8f9fa 25%, #e9ecef 25%, #e9ecef 50%, #f8f9fa 50%, #f8f9fa 75%, #e9ecef 75%, #e9ecef);
+    background-size: 20px 20px;
+}
+
+.vehicle-specs-card,
+.vehicle-description,
+.vehicle-features,
+.reviews-section {
+    border: 1px solid #e9ecef;
+}
+
+.spec-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.spec-label {
+    font-weight: 600;
+    color: #6c757d;
+}
+
+.spec-value {
+    font-weight: 500;
+    color: #333;
+}
+
+.features-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.feature-badge {
+    background: #f8f9fa;
+    color: #495057;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    border: 1px solid #e9ecef;
+}
+
+.rating-stars {
+    font-size: 0.875rem;
+}
+
+.review-item:last-child {
+    border-bottom: none !important;
+}
+
+.pricing-card,
+.quick-booking,
+.contact-info {
+    border: 1px solid #e9ecef;
+}
+
+.pricing-item {
+    padding: 8px 0;
+}
+
+.pricing-label {
+    color: #6c757d;
+}
+
+.pricing-value {
+    font-size: 1.1rem;
+}
+
+.contact-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.contact-item a {
+    color: #333;
+}
+
+.contact-item a:hover {
+    color: #667eea;
+}
+
+.vehicle-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.vehicle-image {
+    height: 150px;
+    object-fit: cover;
+}
+
+.vehicle-type-badge .badge {
+    font-size: 0.75rem;
+    padding: 6px 10px;
+    border-radius: 15px;
+}
+
+.unavailable-notice {
+    border: 1px solid #e9ecef;
+}
+
+@media (max-width: 768px) {
+    .vehicle-image-section img {
+        height: 300px;
+    }
+    
+    .spec-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+    
+    .features-grid {
+        justify-content: center;
+    }
+}
+</style>
+{% endblock %}

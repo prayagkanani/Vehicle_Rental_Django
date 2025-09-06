@@ -1,0 +1,518 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}Contact Us - Rental House{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fas fa-envelope me-3"></i>Contact Us
+                </h1>
+                <p class="lead mb-0">Get in touch with our team</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Content -->
+<section class="contact-content py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Contact Information -->
+            <div class="col-lg-4 mb-5">
+                <div class="contact-info">
+                    <h3 class="fw-bold text-dark mb-4">Get In Touch</h3>
+                    <p class="text-muted mb-4">
+                        Have questions about our services? Need help with a booking? 
+                        We're here to help you 24/7.
+                    </p>
+                    
+                    <div class="contact-methods">
+                        <div class="contact-method mb-4">
+                            <div class="contact-icon">
+                                <i class="fas fa-map-marker-alt fa-2x text-primary"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h6 class="fw-bold mb-1">Address</h6>
+                                <p class="text-muted mb-0">
+                                    katargam<br>
+                                    surat , gujarat<br>
+                                    India
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method mb-4">
+                            <div class="contact-icon">
+                                <i class="fas fa-phone fa-2x text-success"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h6 class="fw-bold mb-1">Phone</h6>
+                                <p class="text-muted mb-0">
+                                    <a href="tel:+919876543210" class="text-decoration-none">+91 63538 55745</a><br>
+                                    <a href="tel:+919876543211" class="text-decoration-none">+91 98792 43698</a>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method mb-4">
+                            <div class="contact-icon">
+                                <i class="fas fa-envelope fa-2x text-warning"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h6 class="fw-bold mb-1">Email</h6>
+                                <p class="text-muted mb-0">
+                                    <a href="mailto:info@rentalhouse.com" class="text-decoration-none">prayag@rentalhouse.com</a><br>
+                                    <a href="mailto:support@rentalhouse.com" class="text-decoration-none">support@rentalhouse.com</a>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="contact-method">
+                            <div class="contact-icon">
+                                <i class="fas fa-clock fa-2x text-info"></i>
+                            </div>
+                            <div class="contact-details">
+                                <h6 class="fw-bold mb-1">Business Hours</h6>
+                                <p class="text-muted mb-0">
+                                    Monday - Sunday<br>
+                                    24/7 Service Available
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Form -->
+            <div class="col-lg-8">
+                <div class="contact-form-card bg-white rounded shadow-sm p-5">
+                    <h3 class="fw-bold text-dark mb-4">Send Us a Message</h3>
+                    
+                    <!-- Success Alert Box -->
+                    <div id="successAlert" class="alert alert-success alert-dismissible fade" role="alert" style="display: none;">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <strong>Success!</strong> Your message has been sent successfully. We will get back to you soon!
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    
+                    <!-- Error Alert Box -->
+                    <div id="errorAlert" class="alert alert-danger alert-dismissible fade" role="alert" style="display: none;">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        <strong>Error!</strong> <span id="errorMessage">Please check your input and try again.</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    
+                    <form class="contact-form">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="firstName" class="form-label fw-semibold">
+                                    <i class="fas fa-user me-2"></i>First Name
+                                </label>
+                                <input type="text" class="form-control" id="firstName" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="lastName" class="form-label fw-semibold">
+                                    <i class="fas fa-user me-2"></i>Last Name
+                                </label>
+                                <input type="text" class="form-control" id="lastName" required>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="email" class="form-label fw-semibold">
+                                    <i class="fas fa-envelope me-2"></i>Email
+                                </label>
+                                <input type="email" class="form-control" id="email" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="phone" class="form-label fw-semibold">
+                                    <i class="fas fa-phone me-2"></i>Phone
+                                </label>
+                                <input type="tel" class="form-control" id="phone" required>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="subject" class="form-label fw-semibold">
+                                <i class="fas fa-tag me-2"></i>Subject
+                            </label>
+                            <select class="form-control" id="subject" required>
+                                <option value="">Select a subject</option>
+                                <option value="general">General Inquiry</option>
+                                <option value="booking">Booking Question</option>
+                                <option value="support">Technical Support</option>
+                                <option value="feedback">Feedback</option>
+                                <option value="complaint">Complaint</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="message" class="form-label fw-semibold">
+                                <i class="fas fa-comment me-2"></i>Message
+                            </label>
+                            <textarea class="form-control" id="message" rows="5" placeholder="Tell us how we can help you..." required></textarea>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-paper-plane me-2"></i>Send Message
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Section -->
+<section class="map-section py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h3 class="fw-bold text-dark mb-2">Find Us</h3>
+            <p class="text-muted">Visit our office or contact us for any assistance</p>
+        </div>
+        
+        <div class="map-container bg-white rounded shadow-sm overflow-hidden">
+            <div class="map-placeholder bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                <div class="text-center">
+                    <i class="fas fa-map fa-4x text-muted mb-3"></i>
+                    <h5 class="text-muted">Interactive Map</h5>
+                    <p class="text-muted">Map integration can be added here</p>
+                    <div class="map-info bg-white p-3 rounded">
+                        <h6 class="fw-bold mb-2">Rental House Office</h6>
+                        <p class="text-muted mb-1">katargam , surat</p>
+                        <p class="text-muted mb-0">India</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-section py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h3 class="fw-bold text-dark mb-2">Frequently Asked Questions</h3>
+            <p class="text-muted">Find answers to common questions</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-6 mb-4">
+                <div class="faq-item bg-white rounded shadow-sm p-4">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-question-circle text-primary me-2"></i>
+                        What documents do I need to rent a vehicle?
+                    </h6>
+                    <p class="text-muted mb-0">
+                        You'll need a valid driving license, ID proof (Aadhar/PAN), and address proof. 
+                        For international customers, a valid passport and international driving permit are required.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="faq-item bg-white rounded shadow-sm p-4">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-question-circle text-primary me-2"></i>
+                        What is the minimum rental period?
+                    </h6>
+                    <p class="text-muted mb-0">
+                        The minimum rental period is 1 hour. You can rent vehicles for hourly, daily, 
+                        or weekly periods depending on your needs.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="faq-item bg-white rounded shadow-sm p-4">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-question-circle text-primary me-2"></i>
+                        Can I cancel my booking?
+                    </h6>
+                    <p class="text-muted mb-0">
+                        Yes, you can cancel your booking up to 24 hours before the scheduled pickup time 
+                        without any cancellation charges.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="faq-item bg-white rounded shadow-sm p-4">
+                    <h6 class="fw-bold mb-3">
+                        <i class="fas fa-question-circle text-primary me-2"></i>
+                        Do you provide insurance coverage?
+                    </h6>
+                    <p class="text-muted mb-0">
+                        Yes, all our vehicles come with comprehensive insurance coverage. 
+                        Additional insurance options are also available for extra protection.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.page-header .container {
+    position: relative;
+    z-index: 2;
+}
+
+.contact-method {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+}
+
+.contact-icon {
+    flex-shrink: 0;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8f9fa;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.contact-method:hover .contact-icon {
+    transform: scale(1.1);
+    background: #e9ecef;
+}
+
+.contact-form-card {
+    border: 1px solid #e9ecef;
+}
+
+.form-control {
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    padding: 12px 16px;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: translateY(-2px);
+}
+
+.btn-lg {
+    border-radius: 12px;
+    padding: 12px 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.map-container {
+    border: 1px solid #e9ecef;
+}
+
+.map-placeholder {
+    position: relative;
+}
+
+.map-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+}
+
+/* Alert Styling */
+.alert {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border-left: 4px solid #28a745;
+}
+
+.alert-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    color: #721c24;
+    border-left: 4px solid #dc3545;
+}
+
+.alert .btn-close {
+    filter: invert(1);
+    opacity: 0.7;
+}
+
+.alert .btn-close:hover {
+    opacity: 1;
+}
+
+.alert.show {
+    animation: slideInDown 0.5s ease-out;
+}
+
+@keyframes slideInDown {
+    from {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.faq-item {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.faq-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 768px) {
+    .contact-method {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .contact-icon {
+        margin: 0 auto;
+    }
+    
+    .map-info {
+        position: relative;
+        bottom: auto;
+        left: auto;
+        margin-top: 20px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Contact form handling
+    const contactForm = document.querySelector('.contact-form');
+    
+    contactForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(this);
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const email = document.getElementById('email').value;
+        const phone = document.getElementById('phone').value;
+        const subject = document.getElementById('subject').value;
+        const message = document.getElementById('message').value;
+        
+        // Hide any existing alerts
+        hideAlerts();
+        
+        // Basic validation
+        if (!firstName || !lastName || !email || !phone || !subject || !message) {
+            showError('Please fill in all required fields.');
+            return;
+        }
+        
+        // Email validation
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            showError('Please enter a valid email address.');
+            return;
+        }
+        
+        // Phone validation
+        const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+        if (!phoneRegex.test(phone.replace(/\s/g, ''))) {
+            showError('Please enter a valid phone number.');
+            return;
+        }
+        
+        // Show success message
+        showSuccess();
+        
+        // Reset form
+        this.reset();
+    });
+    
+    // Form field animations
+    const formFields = document.querySelectorAll('.form-control');
+    formFields.forEach(field => {
+        field.addEventListener('focus', function() {
+            this.parentElement.classList.add('focused');
+        });
+        
+        field.addEventListener('blur', function() {
+            this.parentElement.classList.remove('focused');
+        });
+    });
+    
+    // Helper functions for alerts
+    function showSuccess() {
+        const successAlert = document.getElementById('successAlert');
+        successAlert.style.display = 'block';
+        successAlert.classList.add('show');
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            hideAlerts();
+        }, 5000);
+    }
+    
+    function showError(message) {
+        const errorAlert = document.getElementById('errorAlert');
+        const errorMessageSpan = document.getElementById('errorMessage');
+        errorMessageSpan.textContent = message;
+        errorAlert.style.display = 'block';
+        errorAlert.classList.add('show');
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            hideAlerts();
+        }, 5000);
+    }
+    
+    function hideAlerts() {
+        const successAlert = document.getElementById('successAlert');
+        const errorAlert = document.getElementById('errorAlert');
+        
+        successAlert.style.display = 'none';
+        errorAlert.style.display = 'none';
+        successAlert.classList.remove('show');
+        errorAlert.classList.remove('show');
+    }
+});
+</script>
+{% endblock %}

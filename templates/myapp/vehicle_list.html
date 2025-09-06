@@ -1,0 +1,286 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}Vehicles - Rental House{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fas fa-car me-3"></i>Available Vehicles
+                </h1>
+                <p class="lead mb-0">Choose from our wide selection of bikes, cars, and travellers</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="vehicle-count-badge">
+                    <span class="badge bg-light text-primary fs-6 px-3 py-2">
+                        {{ total_vehicles }} Vehicles Available
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search and Filter Section -->
+<section class="search-section py-4 bg-light">
+    <div class="container">
+        <div class="search-form">
+            <form method="get" class="vehicle-search-form">
+                <div class="row g-3">
+                    <div class="col-lg-3 col-md-6">
+                        <label for="{{ search_form.vehicle_type.id_for_label }}" class="form-label fw-semibold">
+                            <i class="fas fa-filter me-2"></i>Vehicle Type
+                        </label>
+                        {{ search_form.vehicle_type }}
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <label for="{{ search_form.brand.id_for_label }}" class="form-label fw-semibold">
+                            <i class="fas fa-tag me-2"></i>Brand
+                        </label>
+                        {{ search_form.brand }}
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <label for="{{ search_form.min_price.id_for_label }}" class="form-label fw-semibold">
+                            <i class="fas fa-rupee-sign me-2"></i>Min Price
+                        </label>
+                        {{ search_form.min_price }}
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <label for="{{ search_form.max_price.id_for_label }}" class="form-label fw-semibold">
+                            <i class="fas fa-rupee-sign me-2"></i>Max Price
+                        </label>
+                        {{ search_form.max_price }}
+                    </div>
+                    <div class="col-lg-2 col-md-6">
+                        <label for="{{ search_form.seats.id_for_label }}" class="form-label fw-semibold">
+                            <i class="fas fa-users me-2"></i>Min Seats
+                        </label>
+                        {{ search_form.seats }}
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-12 text-center">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fas fa-search me-2"></i>Search Vehicles
+                        </button>
+                        <a href="{% url 'vehicle_list' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Clear Filters
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Vehicles Grid -->
+<section class="vehicles-section py-5">
+    <div class="container">
+        {% if page_obj %}
+            <div class="row">
+                {% for vehicle in page_obj %}
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="vehicle-card h-100 bg-white rounded shadow-sm overflow-hidden" 
+                         data-vehicle-id="{{ vehicle.id }}"
+                         data-price-per-hour="{{ vehicle.price_per_hour }}"
+                         data-price-per-day="{{ vehicle.price_per_day }}">
+                        {% if vehicle.image %}
+                            <img src="{{ vehicle.image.url }}" class="card-img-top vehicle-image" alt="{{ vehicle.name }}">
+                        {% else %}
+                            <div class="vehicle-placeholder bg-light d-flex align-items-center justify-content-center">
+                                <i class="fas fa-car fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="card-body p-4">
+                            <div class="vehicle-type-badge mb-2">
+                                <span class="badge bg-primary">{{ vehicle.get_vehicle_type_display }}</span>
+                                {% if vehicle.is_available %}
+                                    <span class="badge bg-success ms-1">Available</span>
+                                {% else %}
+                                    <span class="badge bg-danger ms-1">Not Available</span>
+                                {% endif %}
+                            </div>
+                            
+                            <h5 class="card-title fw-bold mb-2">{{ vehicle.name }}</h5>
+                            <p class="text-muted mb-3">{{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.year }})</p>
+                            
+                            <div class="vehicle-specs mb-3">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <small class="text-muted d-block">Seats</small>
+                                        <strong>{{ vehicle.seats }}</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-muted d-block">Fuel</small>
+                                        <strong>{{ vehicle.fuel_type }}</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-muted d-block">Transmission</small>
+                                        <strong>{{ vehicle.transmission }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="vehicle-features mb-3">
+                                <small class="text-muted d-block mb-2">Features:</small>
+                                <div class="feature-tags">
+                                    {% for feature in vehicle.get_features_list|slice:":3" %}
+                                        <span class="badge bg-light text-dark me-1 mb-1">{{ feature }}</span>
+                                    {% endfor %}
+                                    {% if vehicle.get_features_list|length > 3 %}
+                                        <span class="badge bg-light text-dark">+{{ vehicle.get_features_list|length|add:"-3" }} more</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="vehicle-price mb-3">
+                                <div class="row align-items-center">
+                                    <div class="col-8">
+                                        <small class="text-muted">Price per 24 hours</small>
+                                        <h4 class="text-primary mb-0">₹{{ vehicle.price_per_day }}</h4>
+                                    </div>
+                                    <div class="col-4 text-end">
+                                        <small class="text-muted">Per hour</small>
+                                        <div class="text-success">₹{{ vehicle.price_per_hour }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <a href="{% url 'vehicle_detail' vehicle.id %}" class="btn btn-outline-primary">
+                                    <i class="fas fa-info-circle me-2"></i>View Details
+                                </a>
+                                {% if vehicle.is_available %}
+                                    <a href="{% url 'book_vehicle' vehicle.id %}" class="btn btn-primary">
+                                        <i class="fas fa-calendar-check me-2"></i>Book Now
+                                    </a>
+                                {% else %}
+                                    <button class="btn btn-secondary" disabled>
+                                        <i class="fas fa-clock me-2"></i>Currently Booked
+                                    </button>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Enhanced Pagination -->
+            {% include 'myapp/includes/pagination.html' %}
+            
+        {% else %}
+            <!-- No vehicles found -->
+            <div class="text-center py-5">
+                <div class="no-vehicles-icon mb-4">
+                    <i class="fas fa-car fa-5x text-muted"></i>
+                </div>
+                <h3 class="text-muted mb-3">No Vehicles Found</h3>
+                <p class="text-muted mb-4">
+                    We couldn't find any vehicles matching your search criteria. 
+                    Try adjusting your filters or check back later.
+                </p>
+                <a href="{% url 'vehicle_list' %}" class="btn btn-primary">
+                    <i class="fas fa-refresh me-2"></i>Clear All Filters
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<style>
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.page-header .container {
+    position: relative;
+    z-index: 2;
+}
+
+.vehicle-count-badge .badge {
+    font-size: 1rem;
+    padding: 12px 20px;
+    border-radius: 25px;
+}
+
+.search-form {
+    background: white;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+.vehicle-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+}
+
+.vehicle-image {
+    height: 220px;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.vehicle-card:hover .vehicle-image {
+    transform: scale(1.05);
+}
+
+.vehicle-placeholder {
+    height: 220px;
+    background: linear-gradient(45deg, #f8f9fa 25%, #e9ecef 25%, #e9ecef 50%, #f8f9fa 50%, #f8f9fa 75%, #e9ecef 75%, #e9ecef);
+    background-size: 20px 20px;
+}
+
+.vehicle-type-badge .badge {
+    font-size: 0.8rem;
+    padding: 8px 12px;
+    border-radius: 20px;
+}
+
+.vehicle-specs {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 15px;
+}
+
+.vehicle-features .feature-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.vehicle-price {
+    border-top: 1px solid #e9ecef;
+    padding-top: 15px;
+}
+
+.no-vehicles-icon {
+    opacity: 0.5;
+}
+
+
+</style>
+{% endblock %}

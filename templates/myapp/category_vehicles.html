@@ -1,0 +1,483 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}{{ category.name }} Vehicles - Rental House{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'vehicle_list' %}" class="text-white">Vehicles</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">{{ category.name }}</li>
+                    </ol>
+                </nav>
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="{{ category.icon_class }} me-3"></i>{{ category.name }} Vehicles
+                </h1>
+                <p class="lead mb-0">{{ category.description }}</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="category-stats">
+                    <span class="badge bg-light text-primary fs-6 px-3 py-2">
+                        <i class="fas fa-car me-2"></i>{{ vehicles.count }} Vehicles Available
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Category Description -->
+<section class="category-description py-4 bg-light">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="category-info">
+                    <h4 class="fw-bold text-dark mb-3">
+                        <i class="fas fa-info-circle me-2 text-primary"></i>About {{ category.name }} Vehicles
+                    </h4>
+                    <p class="text-muted mb-0">{{ category.description }}</p>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="category-features">
+                    <h6 class="fw-bold text-dark mb-2">Category Features:</h6>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check text-success me-2"></i>Well-maintained vehicles</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Competitive pricing</li>
+                        <li><i class="fas fa-check text-success me-2"></i>24/7 support</li>
+                        <li><i class="fas fa-check text-success me-2"></i>Flexible booking options</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Vehicles Grid -->
+<section class="vehicles-grid py-5">
+    <div class="container">
+        <!-- Filter and Sort Options -->
+        <div class="filter-section bg-white rounded shadow-sm p-4 mb-4">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h5 class="fw-bold text-dark mb-0">
+                        <i class="fas fa-filter me-2 text-primary"></i>Filter & Sort
+                    </h5>
+                </div>
+                <div class="col-lg-6">
+                    <div class="d-flex gap-2">
+                        <select class="form-select" id="sortSelect">
+                            <option value="">Sort by</option>
+                            <option value="price_low">Price: Low to High</option>
+                            <option value="price_high">Price: High to Low</option>
+                            <option value="name">Name: A to Z</option>
+                            <option value="year">Year: Newest First</option>
+                        </select>
+                        <select class="form-select" id="filterSelect">
+                            <option value="">All Types</option>
+                            <option value="bike">Bikes</option>
+                            <option value="car">Cars</option>
+                            <option value="traveller">Travellers</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if page_obj %}
+            <div class="row" id="vehiclesContainer">
+                {% for vehicle in page_obj %}
+                <div class="col-lg-4 col-md-6 mb-4 vehicle-item" 
+                     data-type="{{ vehicle.vehicle_type }}" 
+                     data-price="{{ vehicle.price_per_day }}"
+                     data-name="{{ vehicle.name }}"
+                     data-year="{{ vehicle.year }}">
+                    <div class="vehicle-card h-100 bg-white rounded shadow-sm overflow-hidden">
+                        <!-- Vehicle Image -->
+                        <div class="vehicle-image-container">
+                            {% if vehicle.image %}
+                                <img src="{{ vehicle.image.url }}" class="card-img-top vehicle-image" alt="{{ vehicle.name }}">
+                            {% else %}
+                                <div class="vehicle-placeholder bg-light d-flex align-items-center justify-content-center">
+                                    <i class="fas fa-car fa-3x text-muted"></i>
+                                </div>
+                            {% endif %}
+                            
+                            <!-- Vehicle Type Badge -->
+                            <div class="vehicle-type-badge">
+                                <span class="badge bg-primary">{{ vehicle.get_vehicle_type_display }}</span>
+                            </div>
+                            
+                            <!-- Availability Badge -->
+                            <div class="availability-badge">
+                                {% if vehicle.is_available %}
+                                    <span class="badge bg-success">Available</span>
+                                {% else %}
+                                    <span class="badge bg-danger">Booked</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Vehicle Details -->
+                        <div class="card-body p-4">
+                            <h5 class="card-title fw-bold mb-2">{{ vehicle.name }}</h5>
+                            <p class="text-muted small mb-3">{{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.year }})</p>
+                            
+                            <!-- Vehicle Specs -->
+                            <div class="vehicle-specs mb-3">
+                                <div class="row text-center">
+                                    <div class="col-4">
+                                        <small class="text-muted d-block">Type</small>
+                                        <strong>{{ vehicle.get_vehicle_type_display }}</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-muted d-block">Seats</small>
+                                        <strong>{{ vehicle.seats }}</strong>
+                                    </div>
+                                    <div class="col-4">
+                                        <small class="text-muted d-block">Fuel</small>
+                                        <strong>{{ vehicle.fuel_type }}</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Vehicle Features -->
+                            <div class="vehicle-features mb-3">
+                                <div class="features-list">
+                                    {% for feature in vehicle.get_features_list|slice:":3" %}
+                                        <span class="feature-tag">{{ feature }}</span>
+                                    {% endfor %}
+                                    {% if vehicle.get_features_list|length > 3 %}
+                                        <span class="feature-tag">+{{ vehicle.get_features_list|length|add:"-3" }} more</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <!-- Pricing -->
+                            <div class="vehicle-pricing mb-3">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Per Hour</small>
+                                        <span class="text-success fw-bold">₹{{ vehicle.price_per_hour }}</span>
+                                    </div>
+                                    <div class="col-6">
+                                        <small class="text-muted d-block">Per Day</small>
+                                        <span class="text-primary fw-bold fs-5">₹{{ vehicle.price_per_day }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Action Buttons -->
+                            <div class="vehicle-actions">
+                                <div class="d-grid gap-2">
+                                    <a href="{% url 'vehicle_detail' vehicle.id %}" class="btn btn-outline-primary">
+                                        <i class="fas fa-info-circle me-2"></i>View Details
+                                    </a>
+                                    {% if vehicle.is_available %}
+                                        <a href="{% url 'book_vehicle' vehicle.id %}" class="btn btn-success">
+                                            <i class="fas fa-calendar-plus me-2"></i>Book Now
+                                        </a>
+                                    {% else %}
+                                        <button class="btn btn-secondary" disabled>
+                                            <i class="fas fa-clock me-2"></i>Currently Booked
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <!-- Enhanced Pagination -->
+            {% include 'myapp/includes/pagination.html' %}
+            
+        {% else %}
+            <div class="text-center py-5">
+                <div class="no-vehicles-icon mb-4">
+                    <i class="fas fa-car fa-4x text-muted"></i>
+                </div>
+                <h4 class="text-muted mb-3">No Vehicles Found</h4>
+                <p class="text-muted mb-4">No vehicles are currently available in this category.</p>
+                <a href="{% url 'vehicle_list' %}" class="btn btn-primary">
+                    <i class="fas fa-arrow-left me-2"></i>Browse All Vehicles
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Related Categories -->
+<section class="related-categories py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h3 class="fw-bold text-dark mb-2">Explore Other Categories</h3>
+            <p class="text-muted">Discover vehicles in different categories</p>
+        </div>
+        
+        <div class="row">
+            {% for cat in all_categories %}
+            {% if cat != category %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="category-card bg-white rounded shadow-sm p-4 text-center h-100">
+                    <div class="category-icon mb-3">
+                        <i class="{{ cat.icon_class }} fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold mb-2">{{ cat.name }}</h5>
+                    <p class="text-muted small mb-3">{{ cat.description|truncatewords:15 }}</p>
+                    <a href="{% url 'category_vehicles' cat.id %}" class="btn btn-outline-primary">
+                        <i class="fas fa-arrow-right me-2"></i>View Vehicles
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<style>
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.page-header .container {
+    position: relative;
+    z-index: 2;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.breadcrumb-item a {
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    text-decoration: underline;
+}
+
+.filter-section {
+    border: 1px solid #e9ecef;
+}
+
+.vehicle-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.vehicle-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.vehicle-image-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+}
+
+.vehicle-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.vehicle-card:hover .vehicle-image {
+    transform: scale(1.05);
+}
+
+.vehicle-placeholder {
+    height: 200px;
+    background: linear-gradient(45deg, #f8f9fa 25%, #e9ecef 25%, #e9ecef 50%, #f8f9fa 50%, #f8f9fa 75%, #e9ecef 75%, #e9ecef);
+    background-size: 20px 20px;
+}
+
+.vehicle-type-badge {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+}
+
+.availability-badge {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+}
+
+.vehicle-specs {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.features-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.feature-tag {
+    background: #e9ecef;
+    color: #495057;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    border: 1px solid #dee2e6;
+}
+
+.vehicle-pricing {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.feature-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.feature-list li {
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+}
+
+.category-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.category-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.category-icon {
+    opacity: 0.8;
+}
+
+.no-vehicles-icon {
+    opacity: 0.5;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 6px 10px;
+    border-radius: 15px;
+}
+
+@media (max-width: 768px) {
+    .filter-section .row {
+        text-align: center;
+    }
+    
+    .filter-section .col-lg-6:first-child {
+        margin-bottom: 1rem;
+    }
+    
+    .vehicle-image-container {
+        height: 180px;
+    }
+    
+    .vehicle-specs,
+    .vehicle-pricing {
+        padding: 10px;
+    }
+    
+    .features-list {
+        justify-content: center;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const sortSelect = document.getElementById('sortSelect');
+    const filterSelect = document.getElementById('filterSelect');
+    const vehiclesContainer = document.getElementById('vehiclesContainer');
+    const vehicleItems = document.querySelectorAll('.vehicle-item');
+    
+    function sortAndFilterVehicles() {
+        const sortValue = sortSelect.value;
+        const filterValue = filterSelect.value;
+        
+        // Filter vehicles
+        vehicleItems.forEach(item => {
+            const vehicleType = item.dataset.type;
+            let showItem = true;
+            
+            if (filterValue && vehicleType !== filterValue) {
+                showItem = false;
+            }
+            
+            item.style.display = showItem ? 'block' : 'none';
+        });
+        
+        // Sort vehicles
+        const visibleItems = Array.from(vehicleItems).filter(item => 
+            item.style.display !== 'none'
+        );
+        
+        if (sortValue) {
+            visibleItems.sort((a, b) => {
+                switch(sortValue) {
+                    case 'price_low':
+                        return parseFloat(a.dataset.price) - parseFloat(b.dataset.price);
+                    case 'price_high':
+                        return parseFloat(b.dataset.price) - parseFloat(a.dataset.price);
+                    case 'name':
+                        return a.dataset.name.localeCompare(b.dataset.name);
+                    case 'year':
+                        return parseInt(b.dataset.year) - parseInt(a.dataset.year);
+                    default:
+                        return 0;
+                }
+            });
+            
+            // Reorder in DOM
+            visibleItems.forEach(item => {
+                vehiclesContainer.appendChild(item);
+            });
+        }
+    }
+    
+    // Add event listeners
+    sortSelect.addEventListener('change', sortAndFilterVehicles);
+    filterSelect.addEventListener('change', sortAndFilterVehicles);
+    
+    // Add hover effects
+    const vehicleCards = document.querySelectorAll('.vehicle-card');
+    vehicleCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0)';
+        });
+    });
+});
+</script>
+{% endblock %}

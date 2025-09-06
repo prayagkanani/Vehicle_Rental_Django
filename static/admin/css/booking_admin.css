@@ -1,0 +1,119 @@
+/* Admin Panel Enhancement for Bookings */
+
+/* Status badges styling */
+.field-status .field-status {
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+/* Payment status styling */
+.field-payment_status .field-payment_status {
+    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-size: 11px;
+}
+
+/* List display enhancements */
+#result_list {
+    font-size: 13px;
+}
+
+#result_list th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+#result_list td {
+    vertical-align: middle;
+    padding: 8px 4px;
+}
+
+/* Status colors */
+.status-pending {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.status-confirmed {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+.status-active {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.status-completed {
+    background-color: #e2e3e5;
+    color: #383d41;
+    border: 1px solid #d6d8db;
+}
+
+.status-cancelled {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Payment status colors */
+.payment-pending {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.payment-paid {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.payment-failed {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Action buttons */
+.object-tools a {
+    margin-right: 8px;
+}
+
+/* Filter styling */
+#changelist-filter h2 {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+/* Search box */
+#searchbar {
+    margin-bottom: 20px;
+}
+
+/* Pagination */
+.paginator {
+    margin-top: 20px;
+    text-align: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #result_list {
+        font-size: 12px;
+    }
+    
+    #result_list td, #result_list th {
+        padding: 4px 2px;
+    }
+}

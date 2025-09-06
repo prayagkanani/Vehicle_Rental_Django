@@ -1,0 +1,230 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}Rental House - Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section text-white text-center py-5">
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-8 mx-auto">
+                <h1 class="display-3 fw-bold mb-4">
+                    Rent Your Perfect Vehicle
+                </h1>
+                <p class="lead mb-4">
+                    Choose from our wide selection of bikes, cars, and travellers. 
+                    Affordable rates, flexible booking, and excellent service guaranteed.
+                </p>
+                <div class="hero-buttons">
+                    <a href="{% url 'vehicle_list' %}" class="btn btn-primary btn-lg me-3">
+                        <i class="fas fa-car me-2"></i>Browse Vehicles
+                    </a>
+                    {% if not user.is_authenticated %}
+                        <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-user-plus me-2"></i>Get Started
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Vehicle Type Statistics -->
+<section class="stats-section py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="stat-card p-4 bg-white rounded shadow-sm">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-motorcycle fa-3x text-primary"></i>
+                    </div>
+                    <h3 class="fw-bold text-primary">{{ bike_count }}</h3>
+                    <p class="text-muted mb-0">Bikes Available</p>
+                    <small class="text-muted">Starting from ₹500/day</small>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="stat-card p-4 bg-white rounded shadow-sm">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-car fa-3x text-success"></i>
+                    </div>
+                    <h3 class="fw-bold text-success">{{ car_count }}</h3>
+                    <p class="text-muted mb-0">Cars Available</p>
+                    <small class="text-muted">Starting from ₹1500/day</small>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="stat-card p-4 bg-white rounded shadow-sm">
+                    <div class="stat-icon mb-3">
+                        <i class="fas fa-bus fa-3x text-warning"></i>
+                    </div>
+                    <h3 class="fw-bold text-warning">{{ traveller_count }}</h3>
+                    <p class="text-muted mb-0">Travellers Available</p>
+                    <small class="text-muted">Starting from ₹2500/day</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Featured Vehicles -->
+<section class="featured-vehicles py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Featured Vehicles</h2>
+            <p class="lead text-muted">Handpicked vehicles for your perfect journey</p>
+        </div>
+        
+        <div class="row">
+            {% for vehicle in featured_vehicles %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="vehicle-card h-100 bg-white rounded shadow-sm overflow-hidden">
+                    {% if vehicle.image %}
+                        <img src="{{ vehicle.image.url }}" class="card-img-top vehicle-image" alt="{{ vehicle.name }}">
+                    {% else %}
+                        <div class="vehicle-placeholder bg-light d-flex align-items-center justify-content-center">
+                            <i class="fas fa-car fa-3x text-muted"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="card-body p-4">
+                        <div class="vehicle-type-badge mb-2">
+                            <span class="badge bg-primary">{{ vehicle.get_vehicle_type_display }}</span>
+                        </div>
+                        <h5 class="card-title fw-bold mb-2">{{ vehicle.name }}</h5>
+                        <p class="text-muted mb-3">{{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.year }})</p>
+                        
+                        <div class="vehicle-specs mb-3">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Seats</small>
+                                    <strong>{{ vehicle.seats }}</strong>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Fuel</small>
+                                    <strong>{{ vehicle.fuel_type }}</strong>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Transmission</small>
+                                    <strong>{{ vehicle.transmission }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="vehicle-price mb-3">
+                            <div class="row align-items-center">
+                                <div class="col-8">
+                                    <small class="text-muted">Price per 24 hours</small>
+                                    <h4 class="text-primary mb-0">₹{{ vehicle.price_per_day }}</h4>
+                                </div>
+                                <div class="col-4 text-end">
+                                    <small class="text-muted">Per hour</small>
+                                    <div class="text-success">₹{{ vehicle.price_per_hour }}</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <a href="{% url 'vehicle_detail' vehicle.id %}" class="btn btn-outline-primary">
+                                <i class="fas fa-info-circle me-2"></i>View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <div class="py-5">
+                    <i class="fas fa-car fa-3x text-muted mb-3"></i>
+                    <h5 class="text-muted">No vehicles available at the moment</h5>
+                    <p class="text-muted">Please check back later or contact us for more information.</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="text-center mt-4">
+            <a href="{% url 'vehicle_list' %}" class="btn btn-primary btn-lg">
+                <i class="fas fa-list me-2"></i>View All Vehicles
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Categories Section -->
+<section class="categories-section py-5 bg-light">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Vehicle Categories</h2>
+            <p class="lead text-muted">Choose the perfect vehicle type for your needs</p>
+        </div>
+        
+        <div class="row">
+            {% for category in categories %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="category-card text-center p-4 bg-white rounded shadow-sm h-100">
+                    <div class="category-icon mb-3">
+                        <i class="{{ category.icon_class }} fa-3x text-primary"></i>
+                    </div>
+                    <h4 class="fw-bold mb-3">{{ category.name }}</h4>
+                    <p class="text-muted mb-4">{{ category.description }}</p>
+                    <a href="{% url 'category_vehicles' category.id %}" class="btn btn-outline-primary">
+                        Explore {{ category.name }}
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="why-choose-us py-5">
+    <div class="container">
+        <div class="text-center mb-5">
+            <h2 class="display-5 fw-bold text-dark mb-3">Why Choose Rental House?</h2>
+            <p class="lead text-muted">We provide the best vehicle rental experience</p>
+        </div>
+        
+        <div class="row">
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-shield-alt fa-3x text-primary"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Safe & Reliable</h5>
+                    <p class="text-muted">All vehicles are regularly maintained and safety checked</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-rupee-sign fa-3x text-success"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Best Prices</h5>
+                    <p class="text-muted">Competitive rates with no hidden charges</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-clock fa-3x text-warning"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">24/7 Support</h5>
+                    <p class="text-muted">Round the clock customer support and assistance</p>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon mb-3">
+                        <i class="fas fa-mobile-alt fa-3x text-info"></i>
+                    </div>
+                    <h5 class="fw-bold mb-3">Easy Booking</h5>
+                    <p class="text-muted">Simple online booking process</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

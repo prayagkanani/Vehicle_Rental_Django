@@ -1,0 +1,414 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}My Profile - Rental House{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h1 class="display-4 fw-bold mb-3">
+                    <i class="fas fa-user-circle me-3"></i>My Profile
+                </h1>
+                <p class="lead mb-0">Manage your account and view booking history</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="user-info-badge">
+                    <span class="badge bg-light text-primary fs-6 px-3 py-2">
+                        <i class="fas fa-user me-2"></i>{{ user.username }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Profile Content -->
+<section class="profile-content py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Profile Information -->
+            <div class="col-lg-4 mb-5">
+                <div class="profile-card bg-white rounded shadow-sm p-4">
+                    <div class="text-center mb-4">
+                        {% if profile and profile.profile_picture %}
+                            <img src="{{ profile.profile_picture.url }}" class="profile-avatar rounded-circle mb-3" alt="Profile Picture">
+                        {% else %}
+                            <div class="profile-avatar-placeholder rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center">
+                                <i class="fas fa-user fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        <h4 class="fw-bold mb-1">{{ user.get_full_name|default:user.username }}</h4>
+                        <p class="text-muted mb-0">{{ user.email }}</p>
+                    </div>
+                    
+                    <div class="profile-stats text-center mb-4">
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <h5 class="text-primary fw-bold">{{ bookings.count }}</h5>
+                                    <small class="text-muted">Total Bookings</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <h5 class="text-success fw-bold">
+                                        {{ bookings|dictsort:"status"|length }}
+                                    </h5>
+                                    <small class="text-muted">Active Bookings</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="profile-actions">
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'vehicle_list' %}" class="btn btn-primary">
+                                <i class="fas fa-car me-2"></i>Rent a Vehicle
+                            </a>
+                            <a href="{% url 'my_bookings' %}" class="btn btn-outline-primary">
+                                <i class="fas fa-calendar-check me-2"></i>View All Bookings
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Form -->
+            <div class="col-lg-8">
+                <div class="profile-form-card bg-white rounded shadow-sm p-5">
+                    <h3 class="fw-bold text-dark mb-4">
+                        <i class="fas fa-edit me-2 text-primary"></i>Edit Profile
+                    </h3>
+                    
+                    <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.phone.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-phone me-2"></i>Phone Number
+                                </label>
+                                {{ form.phone }}
+                                {% if form.phone.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.phone.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.driving_license.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-id-card me-2"></i>Driving License
+                                </label>
+                                {{ form.driving_license }}
+                                {% if form.driving_license.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.driving_license.errors.0 }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.id_proof.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-passport me-2"></i>ID Proof Number
+                            </label>
+                            {{ form.id_proof }}
+                            {% if form.id_proof.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.id_proof.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.address.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-map-marker-alt me-2"></i>Address
+                            </label>
+                            {{ form.address }}
+                            {% if form.address.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.address.errors.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="{{ form.profile_picture.id_for_label }}" class="form-label fw-semibold">
+                                <i class="fas fa-camera me-2"></i>Profile Picture
+                            </label>
+                            {{ form.profile_picture }}
+                            {% if form.profile_picture.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ form.profile_picture.errors.0 }}
+                                </div>
+                            {% endif %}
+                            <small class="form-text text-muted">Upload a profile picture (optional)</small>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-save me-2"></i>Update Profile
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Recent Bookings -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="recent-bookings bg-white rounded shadow-sm p-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h3 class="fw-bold text-dark mb-0">
+                            <i class="fas fa-history me-2 text-primary"></i>Recent Bookings
+                        </h3>
+                        <a href="{% url 'my_bookings' %}" class="btn btn-outline-primary">
+                            <i class="fas fa-eye me-2"></i>View All
+                        </a>
+                    </div>
+                    
+                    {% if bookings %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Vehicle</th>
+                                        <th>Booking Date</th>
+                                        <th>Duration</th>
+                                        <th>Total Amount</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for booking in bookings|slice:":5" %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="vehicle-icon me-3">
+                                                    {% if booking.vehicle.vehicle_type == 'bike' %}
+                                                        <i class="fas fa-motorcycle fa-2x text-primary"></i>
+                                                    {% elif booking.vehicle.vehicle_type == 'car' %}
+                                                        <i class="fas fa-car fa-2x text-success"></i>
+                                                    {% else %}
+                                                        <i class="fas fa-bus fa-2x text-warning"></i>
+                                                    {% endif %}
+                                                </div>
+                                                <div>
+                                                    <h6 class="fw-bold mb-1">{{ booking.vehicle.name }}</h6>
+                                                    <small class="text-muted">{{ booking.vehicle.brand }} {{ booking.vehicle.model }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <div class="fw-semibold">{{ booking.start_date|date:"M d, Y" }}</div>
+                                                <small class="text-muted">{{ booking.start_date|time:"H:i" }}</small>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% if booking.get_duration_hours < 24 %}
+                                                <span class="badge bg-info">{{ booking.get_duration_hours|floatformat:0 }} hours</span>
+                                            {% else %}
+                                                <span class="badge bg-primary">{{ booking.get_duration_days }} days</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <span class="fw-bold text-success">₹{{ booking.total_amount }}</span>
+                                        </td>
+                                        <td>
+                                            {% if booking.status == 'pending' %}
+                                                <span class="badge bg-warning">Pending</span>
+                                            {% elif booking.status == 'confirmed' %}
+                                                <span class="badge bg-info">Confirmed</span>
+                                            {% elif booking.status == 'active' %}
+                                                <span class="badge bg-success">Active</span>
+                                            {% elif booking.status == 'completed' %}
+                                                <span class="badge bg-secondary">Completed</span>
+                                            {% elif booking.status == 'cancelled' %}
+                                                <span class="badge bg-danger">Cancelled</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="{% url 'vehicle_detail' booking.vehicle.id %}" class="btn btn-sm btn-outline-primary">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                {% if booking.status in 'pending,confirmed' %}
+                                                    <a href="{% url 'cancel_booking' booking.id %}" class="btn btn-sm btn-outline-danger" 
+                                                       onclick="return confirm('Are you sure you want to cancel this booking?')">
+                                                        <i class="fas fa-times"></i>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <div class="no-bookings-icon mb-3">
+                                <i class="fas fa-calendar-times fa-3x text-muted"></i>
+                            </div>
+                            <h5 class="text-muted mb-2">No Bookings Yet</h5>
+                            <p class="text-muted mb-3">You haven't made any bookings yet. Start by renting a vehicle!</p>
+                            <a href="{% url 'vehicle_list' %}" class="btn btn-primary">
+                                <i class="fas fa-car me-2"></i>Browse Vehicles
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.page-header .container {
+    position: relative;
+    z-index: 2;
+}
+
+.profile-card,
+.profile-form-card,
+.recent-bookings {
+    border: 1px solid #e9ecef;
+}
+
+.profile-avatar {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border: 4px solid #f8f9fa;
+}
+
+.profile-avatar-placeholder {
+    width: 100px;
+    height: 100px;
+    background: #f8f9fa;
+    border: 4px solid #e9ecef;
+}
+
+.stat-item {
+    padding: 10px;
+    border-radius: 8px;
+    background: #f8f9fa;
+}
+
+.form-control {
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    padding: 12px 16px;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: translateY(-2px);
+}
+
+.btn-lg {
+    border-radius: 12px;
+    padding: 12px 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.vehicle-icon {
+    width: 40px;
+    text-align: center;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+    color: #495057;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+.badge {
+    font-size: 0.75rem;
+    padding: 6px 10px;
+    border-radius: 15px;
+}
+
+.no-bookings-icon {
+    opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+    .profile-form-card {
+        padding: 20px !important;
+    }
+    
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .vehicle-icon {
+        width: 30px;
+    }
+    
+    .btn-group .btn {
+        padding: 0.25rem 0.5rem;
+        font-size: 0.75rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Form validation
+    const form = document.querySelector('.needs-validation');
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    });
+    
+    // Real-time validation feedback
+    const inputs = form.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            if (this.checkValidity()) {
+                this.classList.remove('is-invalid');
+                this.classList.add('is-valid');
+            } else {
+                this.classList.remove('is-valid');
+                this.classList.add('is-invalid');
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

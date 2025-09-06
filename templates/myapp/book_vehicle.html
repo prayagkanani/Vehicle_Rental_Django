@@ -1,0 +1,427 @@
+{% extends 'myapp/base.html' %}
+
+{% block title %}Book {{ vehicle.name }} - Rental House{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-white">Home</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'vehicle_list' %}" class="text-white">Vehicles</a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'vehicle_detail' vehicle.id %}" class="text-white">{{ vehicle.name }}</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Book Now</li>
+                    </ol>
+                </nav>
+                <h1 class="display-4 fw-bold mb-3">Book {{ vehicle.name }}</h1>
+                <p class="lead mb-0">Complete your booking details below</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <div class="vehicle-type-badge">
+                    <span class="badge bg-light text-primary fs-6 px-3 py-2">
+                        <i class="fas fa-car me-2"></i>{{ vehicle.get_vehicle_type_display }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Booking Form Section -->
+<section class="booking-section py-5">
+    <div class="container">
+        <div class="row">
+            <!-- Booking Form -->
+            <div class="col-lg-8 mb-5">
+                <div class="booking-form-card bg-white rounded shadow-sm p-5">
+                    <h3 class="fw-bold text-dark mb-4">
+                        <i class="fas fa-calendar-plus me-2 text-primary"></i>Booking Details
+                    </h3>
+                    
+                    <form method="post" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.start_date.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-calendar me-2"></i>Pickup Date & Time
+                                </label>
+                                {{ form.start_date }}
+                                {% if form.start_date.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.start_date.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <small class="form-text text-muted">Select when you want to pick up the vehicle</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.end_date.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-calendar me-2"></i>Return Date & Time
+                                </label>
+                                {{ form.end_date }}
+                                {% if form.end_date.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.end_date.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <small class="form-text text-muted">Select when you want to return the vehicle</small>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.pickup_location.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Pickup Location
+                                </label>
+                                {{ form.pickup_location }}
+                                {% if form.pickup_location.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.pickup_location.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <small class="form-text text-muted">Where would you like to pick up the vehicle?</small>
+                            </div>
+                            
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.return_location.id_for_label }}" class="form-label fw-semibold">
+                                    <i class="fas fa-map-marker-alt me-2"></i>Return Location
+                                </label>
+                                {{ form.return_location }}
+                                {% if form.return_location.errors %}
+                                    <div class="invalid-feedback d-block">
+                                        {{ form.return_location.errors.0 }}
+                                    </div>
+                                {% endif %}
+                                <small class="form-text text-muted">Where would you like to return the vehicle?</small>
+                            </div>
+                        </div>
+                        
+                        <!-- Duration and Price Preview -->
+                        <div class="price-preview bg-light rounded p-4 mb-4">
+                            <h6 class="fw-bold mb-3">
+                                <i class="fas fa-calculator me-2 text-primary"></i>Booking Summary
+                            </h6>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="duration-info">
+                                        <small class="text-muted d-block">Duration</small>
+                                        <span class="fw-bold" id="duration-display">Select dates to see duration</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="price-info">
+                                        <small class="text-muted d-block">Estimated Total</small>
+                                        <span class="fw-bold text-primary" id="price-display">₹0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-check-circle me-2"></i>Confirm Booking
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Vehicle Summary and Pricing -->
+            <div class="col-lg-4">
+                <div class="vehicle-summary">
+                    <!-- Vehicle Info Card -->
+                    <div class="vehicle-info-card bg-white rounded shadow-sm p-4 mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-car me-2 text-primary"></i>Vehicle Details
+                        </h5>
+                        
+                        {% if vehicle.image %}
+                            <img src="{{ vehicle.image.url }}" class="img-fluid rounded mb-3" alt="{{ vehicle.name }}">
+                        {% else %}
+                            <div class="vehicle-placeholder bg-light rounded d-flex align-items-center justify-content-center mb-3" style="height: 150px;">
+                                <i class="fas fa-car fa-3x text-muted"></i>
+                            </div>
+                        {% endif %}
+                        
+                        <h6 class="fw-bold mb-2">{{ vehicle.name }}</h6>
+                        <p class="text-muted small mb-3">{{ vehicle.brand }} {{ vehicle.model }} ({{ vehicle.year }})</p>
+                        
+                        <div class="vehicle-specs-summary">
+                            <div class="row text-center">
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Type</small>
+                                    <strong>{{ vehicle.get_vehicle_type_display }}</strong>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Seats</small>
+                                    <strong>{{ vehicle.seats }}</strong>
+                                </div>
+                                <div class="col-4">
+                                    <small class="text-muted d-block">Fuel</small>
+                                    <strong>{{ vehicle.fuel_type }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Pricing Details -->
+                    <div class="pricing-details bg-white rounded shadow-sm p-4 mb-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="fas fa-tags me-2 text-success"></i>Pricing Details
+                        </h5>
+                        
+                        <div class="pricing-item mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="pricing-label">Per Hour:</span>
+                                <span class="pricing-value text-success">₹{{ vehicle.price_per_hour }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="pricing-item mb-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <span class="pricing-label">Per 24 Hours:</span>
+                                <span class="pricing-value text-primary fw-bold">₹{{ vehicle.price_per_day }}</span>
+                            </div>
+                        </div>
+                        
+                        <hr>
+                        
+                        <div class="pricing-note">
+                            <small class="text-muted">
+                                <i class="fas fa-info-circle me-1"></i>
+                                <strong>Pricing Rules:</strong><br>
+                                • Hourly rate applies for bookings under 24 hours<br>
+                                • Daily rate applies for bookings 24 hours or more<br>
+                                • Minimum booking duration: 1 hour
+                            </small>
+                        </div>
+                    </div>
+                    
+                    <!-- Important Notes -->
+                    <div class="important-notes bg-light rounded p-4">
+                        <h6 class="fw-bold mb-3">
+                            <i class="fas fa-exclamation-triangle me-2 text-warning"></i>Important Notes
+                        </h6>
+                        <ul class="notes-list">
+                            <li class="mb-2">
+                                <small class="text-muted">Please arrive 15 minutes before pickup time</small>
+                            </li>
+                            <li class="mb-2">
+                                <small class="text-muted">Bring valid ID proof and driving license</small>
+                            </li>
+                            <li class="mb-2">
+                                <small class="text-muted">Vehicle must be returned in the same condition</small>
+                            </li>
+                            <li class="mb-2">
+                                <small class="text-muted">Fuel charges are additional</small>
+                            </li>
+                            <li>
+                                <small class="text-muted">Late returns may incur additional charges</small>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.page-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="white" opacity="0.1"/><circle cx="75" cy="75" r="1" fill="white" opacity="0.1"/><circle cx="50" cy="10" r="0.5" fill="white" opacity="0.1"/><circle cx="10" cy="60" r="0.5" fill="white" opacity="0.1"/><circle cx="90" cy="40" r="0.5" fill="white" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+    opacity: 0.3;
+}
+
+.page-header .container {
+    position: relative;
+    z-index: 2;
+}
+
+.breadcrumb-item + .breadcrumb-item::before {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.breadcrumb-item a {
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    text-decoration: underline;
+}
+
+.booking-form-card {
+    border: 1px solid #e9ecef;
+}
+
+.form-control {
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+    transition: all 0.3s ease;
+    padding: 12px 16px;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    transform: translateY(-2px);
+}
+
+.btn-lg {
+    border-radius: 12px;
+    padding: 12px 30px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.price-preview {
+    border: 2px solid #e9ecef;
+}
+
+.vehicle-info-card,
+.pricing-details {
+    border: 1px solid #e9ecef;
+}
+
+.vehicle-placeholder {
+    background: linear-gradient(45deg, #f8f9fa 25%, #e9ecef 25%, #e9ecef 50%, #f8f9fa 50%, #f8f9fa 75%, #e9ecef 75%, #e9ecef);
+    background-size: 20px 20px;
+}
+
+.vehicle-specs-summary {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.pricing-item {
+    padding: 8px 0;
+}
+
+.pricing-label {
+    color: #6c757d;
+}
+
+.pricing-value {
+    font-size: 1.1rem;
+}
+
+.notes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.notes-list li {
+    position: relative;
+    padding-left: 20px;
+}
+
+.notes-list li::before {
+    content: '•';
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .booking-form-card {
+        padding: 20px !important;
+    }
+    
+    .price-preview .row {
+        text-align: center;
+    }
+    
+    .price-preview .col-md-6 {
+        margin-bottom: 15px;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const startDateInput = document.getElementById('{{ form.start_date.id_for_label }}');
+    const endDateInput = document.getElementById('{{ form.end_date.id_for_label }}');
+    const durationDisplay = document.getElementById('duration-display');
+    const priceDisplay = document.getElementById('price-display');
+    
+    const pricePerHour = {{ vehicle.price_per_hour }};
+    const pricePerDay = {{ vehicle.price_per_day }};
+    
+    function calculateDurationAndPrice() {
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
+        
+        if (startDateInput.value && endDateInput.value && startDate < endDate) {
+            const durationMs = endDate - startDate;
+            const durationHours = durationMs / (1000 * 60 * 60);
+            const durationDays = durationMs / (1000 * 60 * 60 * 24);
+            
+            // Display duration
+            if (durationHours < 24) {
+                durationDisplay.textContent = `${Math.ceil(durationHours)} hours`;
+            } else {
+                durationDisplay.textContent = `${Math.ceil(durationDays)} days`;
+            }
+            
+            // Calculate and display price
+            let totalPrice;
+            if (durationHours <= 24) {
+                totalPrice = Math.ceil(durationHours) * pricePerHour;
+            } else {
+                totalPrice = Math.ceil(durationDays) * pricePerDay;
+            }
+            
+            priceDisplay.textContent = `₹${totalPrice}`;
+        } else {
+            durationDisplay.textContent = 'Select dates to see duration';
+            priceDisplay.textContent = '₹0';
+        }
+    }
+    
+    // Add event listeners
+    startDateInput.addEventListener('change', calculateDurationAndPrice);
+    endDateInput.addEventListener('change', calculateDurationAndPrice);
+    
+    // Set minimum date to today
+    const today = new Date().toISOString().slice(0, 16);
+    startDateInput.min = today;
+    
+    // Update end date min when start date changes
+    startDateInput.addEventListener('change', function() {
+        endDateInput.min = this.value;
+        if (endDateInput.value && endDateInput.value <= this.value) {
+            endDateInput.value = '';
+        }
+    });
+    
+    // Form validation
+    const form = document.querySelector('.needs-validation');
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+    });
+});
+</script>
+{% endblock %}
