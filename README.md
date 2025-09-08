@@ -118,7 +118,10 @@ vehicle_rental/
 ├── media/                  # User-uploaded files
 ├── manage.py              # Django management script
 └── requirements.txt        # Python dependencies
+
 ```
+<img width="410" height="900" alt="Screenshot 2025-09-08 182523" src="https://github.com/user-attachments/assets/2c8f3298-a6c9-466d-a41e-027276996525" />
+
 
 ## 🎯 Key Features Explained
 
