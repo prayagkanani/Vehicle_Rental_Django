@@ -121,6 +121,7 @@ vehicle_rental/
 
 ```
 <img width="410" height="900" alt="Screenshot 2025-09-08 182523" src="https://github.com/user-attachments/assets/2c8f3298-a6c9-466d-a41e-027276996525" />
+<img width="1904" height="976" alt="Screenshot 2025-09-08 182414" src="https://github.com/user-attachments/assets/a0616ffb-a83f-4fa8-a67d-fe5785872a5c" />
 
 
 ## 🎯 Key Features Explained
