@@ -85,10 +85,6 @@ python manage.py populate_db
 python manage.py runserver
 ```
 
-### 8. Access the Application
-- **Main Website**: http://127.0.0.1:8000/
-- **Admin Panel**: http://127.0.0.1:8000/admin/
-
 ## 🏗️ Project Structure
 
 ```
@@ -212,17 +208,6 @@ The website is fully responsive and optimized for:
 3. Make your changes
 4. Add tests if applicable
 5. Submit a pull request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🆘 Support
-
-For support and questions:
-- **Email**: info@rentalhouse.com
-- **Phone**: +91 98765 43210
-- **Website**: http://rentalhouse.com
 
 ## 🙏 Acknowledgments
 
